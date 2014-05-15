@@ -132,7 +132,6 @@ class Puppet::SSL::CertificateAuthority
 
   # Generate our CA certificate.
   def generate_ca_certificate
-    generate_password unless password?
 
     host.generate_key unless host.key
 
@@ -164,22 +163,6 @@ class Puppet::SSL::CertificateAuthority
   # Retrieve (or create, if necessary) our inventory manager.
   def inventory
     @inventory ||= Puppet::SSL::Inventory.new
-  end
-
-  # Generate a new password for the CA.
-  def generate_password
-    pass = ""
-    20.times { pass += (rand(74) + 48).chr }
-
-    begin
-      Puppet.settings.setting(:capass).open('w') { |f| f.print pass }
-    rescue Errno::EACCES => detail
-      raise Puppet::Error, "Could not write CA password: #{detail}", detail.backtrace
-    end
-
-    @password = pass
-
-    pass
   end
 
   # Lists the names of all signed certificates.
@@ -227,11 +210,6 @@ class Puppet::SSL::CertificateAuthority
     end
 
     serial
-  end
-
-  # Does the password file exist?
-  def password?
-    Puppet::FileSystem.exist?(Puppet[:capass])
   end
 
   # Print a given host's certificate as text.

@@ -644,15 +644,6 @@ EOT
       :group => "service",
       :desc => "Where the client stores private certificate information."
     },
-    :passfile => {
-      :default => "$privatedir/password",
-      :type   => :file,
-      :mode => 0640,
-      :owner => "service",
-      :group => "service",
-      :desc => "Where puppet agent stores the password for its private key.
-        Generally unused."
-    },
     :hostcsr => {
       :default => "$ssldir/csr_$certname.pem",
       :type   => :file,
@@ -813,14 +804,6 @@ EOT
       :group => "service",
       :mode => 0755,
       :desc => "Where the CA stores signed certificates."
-    },
-    :capass => {
-      :default => "$caprivatedir/ca.pass",
-      :type => :file,
-      :owner => "service",
-      :group => "service",
-      :mode => 0640,
-      :desc => "Where the CA stores the password for the private key."
     },
     :serial => {
       :default => "$cadir/serial",

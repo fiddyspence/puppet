@@ -17,8 +17,6 @@ DOC
     [:s]
   end
 
-  attr_accessor :password_file
-
   # Knows how to create keys with our system defaults.
   def generate
     Puppet.info "Creating a new SSL key for #{name}"
@@ -27,33 +25,6 @@ DOC
 
   def initialize(name)
     super
-
-    if ca?
-      @password_file = Puppet[:capass]
-    else
-      @password_file = Puppet[:passfile]
-    end
   end
 
-  def password
-    return nil unless password_file and Puppet::FileSystem.exist?(password_file)
-
-    ::File.read(password_file)
-  end
-
-  # Optionally support specifying a password file.
-  def read(path)
-    return super unless password_file
-
-    #@content = wrapped_class.new(::File.read(path), password)
-    @content = wrapped_class.new(::File.read(path), password)
-  end
-
-  def to_s
-    if pass = password
-      @content.export(OpenSSL::Cipher::DES.new(:EDE3, :CBC), pass)
-    else
-      return super
-    end
-  end
 end

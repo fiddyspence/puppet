@@ -162,23 +162,7 @@ describe Puppet::SSL::CertificateAuthority do
       @ca.stubs(:host).returns @host
     end
 
-    it "should create and store a password at :capass" do
-      Puppet[:capass] = File.expand_path("/path/to/pass")
-
-      Puppet::FileSystem.expects(:exist?).with(Puppet[:capass]).returns false
-
-      fh = StringIO.new
-      Puppet.settings.setting(:capass).expects(:open).with('w').yields fh
-
-      @ca.stubs(:sign)
-
-      @ca.generate_ca_certificate
-
-      expect(fh.string.length).to be > 18
-    end
-
     it "should generate a key if one does not exist" do
-      @ca.stubs :generate_password
       @ca.stubs :sign
 
       @ca.host.expects(:key).returns nil
@@ -195,13 +179,10 @@ describe Puppet::SSL::CertificateAuthority do
 
       @ca.expects(:sign).with(@host.name, false, request)
 
-      @ca.stubs :generate_password
-
       @ca.generate_ca_certificate
     end
 
     it "should generate its CRL" do
-      @ca.stubs :generate_password
       @ca.stubs :sign
 
       @ca.host.expects(:key).returns nil
@@ -989,12 +970,8 @@ describe "CertificateAuthority.generate" do
     expect_to_increment_serial_file
   end
 
-  def expect_to_write_the_ca_password
-    Puppet.settings.setting(:capass).expects(:open).with('w')
-  end
 
   def expect_ca_initialization
-    expect_to_write_the_ca_password
     expect_to_sign_a_cert
   end
 
